@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecozone Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+            background: white;
+            color: black;
+        }
+        h1 { text-align: center; }
+        input, button {
+            padding: 10px;
+            margin: 10px;
+            border: 1px solid black;
+            border-radius: 5px;
+            font-size: 16px;
+            color: black;
+            background: white;
+        }
+        input { width: 250px; }
+        button { cursor: pointer; }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .green { color: green; }
+        .orange { color: orange; }
+        .red { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Ecozone Tracker</h1>
+    <input type="text" id="cityInput" list="cityList" placeholder="Type or Select Your City">
+    <datalist id="cityList"></datalist>
+    <button onclick="analyze()">Analyze</button>
+    <div id="result" class="result"></div>
+
+    <script>
+        const cityData = {
+            "Ahmednagar": { population: 350859, trees: 180000, area: 170 },
+            "Akola": { population: 425817, trees: 220000, area: 128 },
+            "Amravati": { population: 646801, trees: 350000, area: 270 },
+            "Aurangabad": { population: 1175116, trees: 600000, area: 139 },
+            "Badlapur": { population: 174226, trees: 90000, area: 35.68 },
+            "Beed": { population: 146709, trees: 75000, area: 44 },
+            "Bhandara": { population: 120339, trees: 62000, area: 36 },
+            "Bhusawal": { population: 187421, trees: 100000, area: 22 },
+            "Chandrapur": { population: 320379, trees: 170000, area: 70.02 },
+            "Dhule": { population: 375603, trees: 190000, area: 46.46 },
+            "Gondia": { population: 132813, trees: 70000, area: 29.47 },
+            "Hinganghat": { population: 101678, trees: 47000, area: 27.24 },
+            "Ichalkaranji": { population: 287570, trees: 150000, area: 29.66 },
+            "Jalgaon": { population: 460228, trees: 240000, area: 68.25 },
+            "Jalna": { population: 285577, trees: 140000, area: 70.36 },
+            "Karad": { population: 214690, trees: 115000, area: 30 },
+            "Kolhapur": { population: 549283, trees: 320000, area: 66.82 },
+            "Latur": { population: 394124, trees: 210000, area: 32.31 },
+            "Mumbai": { population: 12442373, trees: 2000000, area: 603 },
+            "Nagpur": { population: 2405665, trees: 1500000, area: 217.65 },
+            "Nanded": { population: 550564, trees: 300000, area: 63.3 },
+            "Nashik": { population: 1486053, trees: 1200000, area: 264.23 },
+            "Osmanabad": { population: 111825, trees: 54000, area: 63 },
+            "Palghar": { population: 146432, trees: 74000, area: 42 },
+            "Panvel": { population: 180020, trees: 95000, area: 110 },
+            "Parbhani": { population: 307170, trees: 160000, area: 62.6 },
+            "Pune": { population: 3124458, trees: 3300000, area: 331.26 },
+            "Ratnagiri": { population: 121200, trees: 70000, area: 50 },
+            "Satara": { population: 120195, trees: 65000, area: 8.06 },
+            "Sangli": { population: 251000, trees: 130000, area: 45 },
+            "Solapur": { population: 951558, trees: 400000, area: 178.57 },
+            "Thane": { population: 1841488, trees: 800000, area: 147 },
+            "Udgir": { population: 103550, trees: 48000, area: 16.67 },
+            "Vasai-Virar": { population: 1222390, trees: 650000, area: 311 },
+            "Wardha": { population: 106444, trees: 50000, area: 54 },
+            "Washim": { population: 78000, trees: 39000, area: 25 },
+            "Yavatmal": { population: 116551, trees: 58000, area: 13 }
+        };
+
+        const cityList = document.getElementById('cityList');
+
+        Object.keys(cityData).sort().forEach(city => {
+            let option = document.createElement('option');
+            option.value = city;
+            cityList.appendChild(option);
+        });
+
+        function analyze() {
+            const cityName = document.getElementById('cityInput').value;
+            if (!cityData[cityName]) {
+                document.getElementById('result').innerHTML = "<p>Please select a valid city.</p>";
+                return;
+            }
+
+            const city = cityData[cityName];
+            const requiredTrees = city.population / 2;  
+            const treeRatio = city.trees / requiredTrees;
+            let zone = '';
+            let treesNeeded = Math.max(0, requiredTrees - city.trees);
+
+            if (treeRatio >= 1) {
+                zone = '<span class="green">Green Zone</span>';
+            } else if (treeRatio >= 0.5) {
+                zone = '<span class="orange">Orange Zone</span>';
+            } else {
+                zone = '<span class="red">Red Zone</span>';
+            }
+
+            document.getElementById('result').innerHTML = `
+                <p>Population: ${city.population.toLocaleString()}</p>
+                <p>Tree Count: ${city.trees.toLocaleString()}</p>
+                <p>Area: ${city.area.toLocaleString()} sq km</p>
+                <p>Your city is in the ${zone}</p>
+                ${treesNeeded > 0 ? `<p>To reach a Green Zone, plant <span class="${zone.includes('Green') ? 'green' : zone.includes('Orange') ? 'orange' : 'red'}">${Math.ceil(treesNeeded).toLocaleString()}</span> more trees.</p>` : ''}
+            `;
+        }
+    </script>
+</body>
+</html>
